@@ -1,5 +1,6 @@
 <script>
   import StatusIndicator from '../ui/components/StatusIndicator.svelte';
+  import TelemetryPanel from '../ui/TelemetryPanel.svelte';
   let message = "Hello, Svelte Chrome Extension!";
 </script>
 
@@ -13,6 +14,12 @@
     <StatusIndicator status="fail" showText={true} text="Test Failure" />
     <StatusIndicator status="warning" showText={true} text="Needs Attention" />
     <StatusIndicator status="unknown" showText={true} />
+  </div>
+  
+  <!-- Test TelemetryPanel with store integration -->
+  <div class="telemetry-test">
+    <h2>Store Integration Test</h2>
+    <TelemetryPanel />
   </div>
 </main>
 
