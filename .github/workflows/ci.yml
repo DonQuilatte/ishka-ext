@@ -1,0 +1,125 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ master, main, develop ]
+  pull_request:
+    branches: [ master, main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        node-version: [24.5.0]
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        
+    - name: Setup pnpm
+      uses: pnpm/action-setup@v2
+      with:
+        version: 10.8.0
+        
+    - name: Install dependencies
+      run: pnpm install --frozen-lockfile
+      
+    - name: Lint styles (design token compliance)
+      run: npx stylelint 'src/**/*.svelte' --formatter compact
+      
+    - name: Run unit tests
+      run: pnpm test
+      
+    - name: Build extension
+      run: pnpm build
+      
+    - name: Verify build artifacts
+      run: |
+        ls -la dist/
+        test -f dist/manifest.json
+        test -d dist/assets/
+        echo "✅ Build artifacts verified"
+        
+    - name: Install Playwright browsers
+      run: npx playwright install chromium
+      
+    - name: Run E2E tests
+      run: pnpm test:e2e
+      
+    - name: Upload test results
+      uses: actions/upload-artifact@v4
+      if: failure()
+      with:
+        name: test-results
+        path: test-results/
+        
+    - name: Upload extension build
+      uses: actions/upload-artifact@v4
+      with:
+        name: extension-build-${{ github.sha }}
+        path: dist/
+
+  build-check:
+    runs-on: ubuntu-latest
+    needs: test
+    
+    steps:
+    - name: Download build artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: extension-build-${{ github.sha }}
+        path: dist/
+        
+    - name: Validate Chrome extension
+      run: |
+        # Basic manifest validation
+        node -e "JSON.parse(require('fs').readFileSync('dist/manifest.json', 'utf8'))"
+        echo "✅ manifest.json is valid JSON"
+        
+        # Check required files exist
+        test -f dist/src/popup/index.html
+        test -d dist/assets/
+        echo "✅ Required extension files present"
+        
+        # Check bundle sizes (warn if too large)
+        MAIN_SIZE=$(stat -c%s dist/assets/index.html-*.js 2>/dev/null || stat -f%z dist/assets/index.html-*.js)
+        if [ $MAIN_SIZE -gt 1048576 ]; then
+          echo "⚠️ Warning: Main bundle size ${MAIN_SIZE} bytes exceeds 1MB"
+        else
+          echo "✅ Bundle size acceptable: ${MAIN_SIZE} bytes"
+        fi
+
+  release:
+    runs-on: ubuntu-latest
+    needs: [test, build-check]
+    if: github.ref == 'refs/heads/master' && github.event_name == 'push'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Download build artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: extension-build-${{ github.sha }}
+        path: dist/
+        
+    - name: Create release package
+      run: |
+        cd dist/
+        zip -r ../ishka-extension-${{ github.sha }}.zip .
+        cd ..
+        echo "✅ Release package created"
+        
+    - name: Upload release artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: release-package-${{ github.sha }}
+        path: ishka-extension-${{ github.sha }}.zip
