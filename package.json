@@ -5,11 +5,16 @@
   "private": true,
   "scripts": {
     "dev": "vite",
+    "dev:watch": "tsx scripts/continuous-development.ts",
+    "dev:reload": "tsx scripts/chrome-extension-reload.ts",
+    "dev:dashboard": "tsx scripts/dashboard-server.ts",
     "build": "vite build",
     "test": "vitest",
     "test:unit": "vitest run",
     "test:e2e": "playwright test",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "storybook": "echo 'Storybook not configured yet - using placeholder for E2E tests'",
+    "automation:complete": "tsx scripts/complete-automation.ts"
   },
   "dependencies": {
     "svelte": "^5.28.1"
@@ -25,6 +30,14 @@
     "jsdom": "^23.0.0",
     "@vitest/coverage-v8": "^1.0.0",
     "webextension-polyfill": "^0.10.0",
-    "@types/webextension-polyfill": "^0.10.0"
+    "@types/webextension-polyfill": "^0.10.0",
+    "wait-on": "^7.0.0",
+    "@storybook/svelte": "^7.0.0",
+    "@storybook/svelte-vite": "^7.0.0",
+    "tsx": "^4.0.0",
+    "typescript": "^5.0.0",
+    "chokidar": "^3.5.3",
+    "ws": "^8.14.2",
+    "@types/ws": "^8.5.10"
   }
 }

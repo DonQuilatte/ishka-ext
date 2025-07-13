@@ -7,7 +7,8 @@ on:
     branches: [ master, main ]
 
 jobs:
-  test:
+  quick-tests:
+    name: Quick Tests (Unit & Integration)
     runs-on: ubuntu-latest
     
     strategy:
@@ -66,9 +67,48 @@ jobs:
         name: extension-build-${{ github.sha }}
         path: dist/
 
+  e2e-tests:
+    name: E2E Tests  
+    runs-on: ubuntu-latest
+    needs: quick-tests
+    if: github.event_name == 'pull_request'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 24.5.0
+        
+    - name: Setup pnpm
+      uses: pnpm/action-setup@v2
+      with:
+        version: 10.8.0
+        
+    - name: Install dependencies
+      run: pnpm install --frozen-lockfile
+      
+    - name: Build extension
+      run: pnpm build
+      
+    - name: Install Playwright browsers
+      run: npx playwright install chromium
+      
+    - name: Run E2E tests
+      run: pnpm test:e2e --reporter=html
+      
+    - name: Upload E2E test results
+      uses: actions/upload-artifact@v4
+      if: failure()
+      with:
+        name: e2e-test-results-${{ github.sha }}
+        path: test-results/
+
   build-check:
     runs-on: ubuntu-latest
-    needs: test
+    needs: quick-tests
     
     steps:
     - name: Download build artifacts
