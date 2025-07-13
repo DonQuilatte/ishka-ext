@@ -13,7 +13,8 @@
     "test:unit": "vitest run",
     "test:e2e": "playwright test",
     "test:coverage": "vitest run --coverage",
-    "storybook": "echo 'Storybook not configured yet - using placeholder for E2E tests'",
+    "dev:playground": "vite --mode development --config vite.playground.config.js",
+    "test:visual": "playwright test tests/e2e/visual/",
     "automation:complete": "tsx scripts/complete-automation.ts"
   },
   "dependencies": {
@@ -32,8 +33,6 @@
     "webextension-polyfill": "^0.10.0",
     "@types/webextension-polyfill": "^0.10.0",
     "wait-on": "^7.0.0",
-    "@storybook/svelte": "^7.0.0",
-    "@storybook/svelte-vite": "^7.0.0",
     "tsx": "^4.0.0",
     "typescript": "^5.0.0",
     "chokidar": "^3.5.3",
