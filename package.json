@@ -23,6 +23,8 @@
     "@playwright/test": "^1.40.0",
     "vitest": "^1.0.0",
     "jsdom": "^23.0.0",
-    "@vitest/coverage-v8": "^1.0.0"
+    "@vitest/coverage-v8": "^1.0.0",
+    "webextension-polyfill": "^0.10.0",
+    "@types/webextension-polyfill": "^0.10.0"
   }
 }
