@@ -1,0 +1,37 @@
+import '@testing-library/jest-dom';
+import { render } from '@testing-library/svelte';
+import StatusIndicator from '../../src/ui/components/StatusIndicator.svelte';
+import { describe, it, expect } from 'vitest';
+
+describe('StatusIndicator', () => {
+  it('renders correct text for each status', () => {
+    const { getByText, rerender } = render(StatusIndicator, { status: 'pass', showText: true });
+    expect(getByText('Healthy')).toBeInTheDocument();
+    rerender({ status: 'fail', showText: true });
+    expect(getByText('Issues')).toBeInTheDocument();
+    rerender({ status: 'warning', showText: true });
+    expect(getByText('Warnings')).toBeInTheDocument();
+    rerender({ status: 'unknown', showText: true });
+    expect(getByText('Unknown')).toBeInTheDocument();
+  });
+
+  it('applies correct status and size classes', () => {
+    const { container, rerender } = render(StatusIndicator, { status: 'fail', size: 'large' });
+    const indicator = container.querySelector('.status-indicator');
+    expect(indicator?.className).toContain('status-fail');
+    expect(indicator?.className).toContain('size-large');
+    rerender({ status: 'pass', size: 'small' });
+    expect(indicator?.className).toContain('status-pass');
+    expect(indicator?.className).toContain('size-small');
+  });
+
+  it('shows custom text if provided', () => {
+    const { getByText } = render(StatusIndicator, { status: 'pass', showText: true, text: 'All Good' });
+    expect(getByText('All Good')).toBeInTheDocument();
+  });
+
+  it('does not render text if showText is false', () => {
+    const { queryByText } = render(StatusIndicator, { status: 'pass', showText: false });
+    expect(queryByText('Healthy')).not.toBeInTheDocument();
+  });
+}); 

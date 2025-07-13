@@ -1,0 +1,120 @@
+{
+    "/project:style": {
+      "description": "Audit and define design tokens from ChatGPT UI",
+      "steps": [
+        "Use DevTools to extract computed styles from reference UI element",
+        "Propose `--ishka-*` CSS variables for any new values",
+        "Update `theme.css` and `DESIGN_SYSTEM.md` accordingly",
+        "Create or update Svelte component using only `--ishka-*` tokens"
+      ],
+      "claude_assist": true
+    },
+    "/component:storybook": {
+      "description": "Generate a Storybook file for a new or updated component",
+      "steps": [
+        "Create `<Component>.stories.svelte` in the same folder",
+        "Include default, hover, focus, and loading states",
+        "Use actual `--ishka-*` tokens for styling",
+        "Ensure controls are documented for each prop"
+      ],
+      "claude_assist": true
+    },
+    "/ui:lintfix": {
+      "description": "Run Stylelint and auto-fix violations of the Ishka design system",
+      "steps": [
+        "Run `npx stylelint 'src/**/*.svelte' --fix`",
+        "Ensure no hardcoded visual values remain",
+        "Commit and push with summary of tokenized fixes"
+      ],
+      "claude_assist": true
+    },
+    "/component:filters": {
+      "description": "Add a new filter option to SearchHistoryPanel",
+      "steps": [
+        "Update `/src/components/common/types.ts` with new filter type",
+        "Update `/src/store/filters-store.ts` with new filter logic",
+        "Update SearchHistoryPanel.svelte props and bindings",
+        "Add to filter UI block using only `--ishka-*` token usage",
+        "Create new story variant in SearchHistoryPanel.stories.svelte",
+        "Test filtering functionality and update documentation"
+      ],
+      "claude_assist": true
+    },
+    "/component:extend": {
+      "description": "Extend SearchHistoryPanel with new features or export formats",
+      "steps": [
+        "Identify extension requirements and interface changes",
+        "Update component types in `/src/components/common/types.ts`",
+        "Implement feature using existing `--ishka-*` design tokens",
+        "Add EventBus integration if needed for real-time updates",
+        "Create comprehensive Storybook story for new functionality",
+        "Update CLAUDE.md and DESIGN_SYSTEM.md documentation"
+      ],
+      "claude_assist": true
+    },
+    "/project:content": {
+      "description": "Add or update content script behaviors for DOM injection or ChatGPT-specific logic",
+      "steps": [
+        "Update content.ts for injection, session handling, or observer logic",
+        "Ensure compatibility with ChatGPTAdapter and EventBus",
+        "Add error handling with diagnostic events for reporting",
+        "Ensure shadow DOM isolation is preserved",
+        "Add messaging integration with background.ts if needed"
+      ],
+      "claude_assist": true
+    },
+    "/component:filterinput": {
+      "description": "Scaffold a new select or date input component with design tokens, stories, and metadata block",
+      "steps": [
+        "Generate a Svelte component for select or date input, starting with a JSDoc metadata block for @component, @tokens, @story, @tested",
+        "Apply design system tokens and utility classes",
+        "Add Storybook story and basic tests"
+      ],
+      "claude_assist": true
+    },
+    "/component:refactor": {
+      "description": "Replace inline select elements with shared component usage",
+      "steps": [
+        "Find inline select/date inputs in codebase",
+        "Replace with FilterDropdown or DateRangePicker",
+        "Update imports and props as needed",
+        "Add/adjust tests for new usage"
+      ],
+      "claude_assist": true
+    },
+    "/test:accessibility": {
+      "description": "Validate ARIA and keyboard accessibility for a component or page",
+      "steps": [
+        "Run automated accessibility checks (e.g., axe, Playwright a11y) on target",
+        "Validate ARIA roles, labels, and keyboard navigation",
+        "Report issues and suggest remediations"
+      ],
+      "claude_assist": true
+    },
+    "/ishkatest": {
+      "description": "Run complete development automation cycle with detailed reporting",
+      "steps": [
+        "Execute `pnpm run dev:complete` to run full automation cycle",
+        "Build extension and attempt browser management operations",
+        "Test popup functionality and capture all errors",
+        "Generate detailed reports in test-reports/ directory",
+        "Provide specific recommendations for next development steps",
+        "Display both human-readable summary and JSON results"
+      ],
+      "claude_assist": true
+    },
+    "/ishkaenhanced": {
+      "description": "Run enhanced automation with real error capture and intelligent analysis",
+      "steps": [
+        "Execute `pnpm run dev:enhanced` to run enhanced automation cycle",
+        "Use MCP browser tools for real extension monitoring",
+        "Capture actual extension runtime errors (including effect_orphan)",
+        "Perform intelligent error classification and root cause analysis",
+        "Generate comprehensive reports with fix recommendations",
+        "Open enhanced dashboard at `pnpm run dev:enhanced-dashboard`",
+        "Provide real-time developer feedback with actionable insights"
+      ],
+      "claude_assist": true
+    }
+  }
+  
