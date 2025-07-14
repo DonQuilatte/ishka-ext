@@ -1,0 +1,9 @@
+{
+  "svelte.enable-ts-plugin": true,
+  "eslint.validate": ["svelte"],
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit",
+    "source.fixAll.stylelint": "explicit"
+  },
+  "typescript.preferences.importModuleSpecifier": "relative"
+}
