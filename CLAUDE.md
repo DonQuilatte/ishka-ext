@@ -4,9 +4,10 @@
 
 ### Project Overview
 
-Ishka is a Chrome browser extension that enhances the ChatGPT user experience by providing diagnostics, full-text search, export tools, and organization features. It integrates seamlessly into the ChatGPT UI, offering a "pro mode" without disrupting native workflows.
+Ishka is a Chrome browser extension that enhances the ChatGPT user experience through **local-first productivity tools** including tags, templates, notes, and data export. It follows a **stability-first philosophy** that prioritizes graceful degradation and user trust over aggressive feature implementation.
 
-**Status**: Production-ready after successful Phoenix Protocol migration ✅
+**Status**: Production-ready foundation with user-centered feature roadmap ✅  
+**Strategic Focus**: Local organization, workflow enhancement, and data portability
 
 ### Tech Stack (LTS - Validated)
 
@@ -17,7 +18,7 @@ Ishka is a Chrome browser extension that enhances the ChatGPT user experience by
 * **Node**: v24.5.0 (per .nvmrc)
 * **Package Manager**: pnpm 10.8.0
 * **Database**: Chrome Storage API + IndexedDB
-* **Styling**: Namespaced CSS with `--ishka-*` tokens
+* **Styling**: CSS variables with `--ix-*` tokens (mirrored from ChatGPT computed styles)
 * **Testing**: Vitest (unit), Playwright (e2e), Storybook (visual)
 
 ### Migration History
@@ -205,7 +206,7 @@ The extension includes automated memory cleanup to prevent leaks:
 **SearchHistoryPanel.svelte** (`src/components/common/`)
 - Purpose: Advanced diagnostics history viewer and search tool
 - Features: Real-time search, filterable timeline, token tracking, export
-- Styling: Full `--ishka-*` token compliance with dark/light mode
+- Styling: Full `--ix-*` token compliance with dark/light mode
 - Integration: `diagnosticStore`, `filtersStore`, `EventBus`
 - Testing: 8 Storybook variants covering all interaction modes
 
@@ -243,6 +244,133 @@ The extension includes automated memory cleanup to prevent leaks:
 - `data-exporter.ts`: Export functionality (JSON, CSV)
 - `event-bus.ts`: Internal messaging and component communication
 - `logger.ts`: Structured logging with levels and categories
+
+---
+
+## 🛡️ Design Principles & Development Guardrails
+
+This project follows **non-negotiable architectural and ethical guidelines** to ensure long-term maintainability, stability, and user trust:
+
+### Core Design Principles
+
+1. **Stability Over Aggression**: Prioritize features that degrade gracefully and never depend on brittle internal DOM structures or undocumented APIs
+2. **Local-First Philosophy**: All data stored and processed locally unless a public, documented API becomes available
+3. **Chameleon Integration**: Mirror host UI through computed style mirroring and semantic selectors — never via visual guesswork
+4. **Predictable UX**: Never surprise users. All injected UI must look, feel, and behave like native ChatGPT functionality
+5. **Zero Trust, Zero Breakage**: Defensive code patterns, runtime guards, and fallback UI ensure extension never silently fails
+6. **Graceful Degradation**: Failed features remain visible but disabled with clear explanation tooltips
+
+### Mandatory Development Guardrails
+
+**🚫 FORBIDDEN**:
+- Direct GraphQL query injection or mutation
+- Scraping of internal APIs or private DOM state
+- Hardcoded selectors anywhere in code
+- Raw CSS values or color codes
+- Ad hoc `chrome.storage` calls
+
+**✅ REQUIRED**:
+- All selectors must come from `src/content/dom/selectors.ts`
+- All style tokens retrieved at runtime from computed styles using `--ix-*` namespace
+- Every DOM injection must fail gracefully with fallback logic
+- All features must run in Safe Mode without crashing
+- Visual regression tests for all UI changes
+
+### Critical Infrastructure Requirements
+
+**Every new feature MUST document**:
+- UI anchor strategy and fallback plan
+- DOM injection approach with Safe Mode behavior
+- Storage mapping using `storage-manager.ts`
+- Reversion plan if DOM selectors change
+
+**Safety Requirements**:
+- Opt-in consent for any local tracking features (clipboard history, usage stats)
+- Performance isolation from ChatGPT (zero impact on native responsiveness)
+- Memory usage monitoring and cleanup procedures
+
+---
+
+## 🎯 Feature Implementation Standards
+
+### Selector Management (CRITICAL)
+All DOM selectors must be centralized in `src/content/dom/selectors.ts`:
+
+```typescript
+// REQUIRED STRUCTURE
+export const selectors = {
+  injection: {
+    promptTextareaContainer: '[data-testid="prompt-textarea"]',
+    conversationContainer: 'main[role="main"]'
+  },
+  fallback: {
+    promptArea: 'textarea, [contenteditable]',
+    messageArea: 'main, #main, .conversation'
+  }
+};
+```
+
+### Storage Operations (CRITICAL)
+All data persistence must use `src/utils/storage/storage-manager.ts`:
+
+```typescript
+// NEVER do this:
+chrome.storage.local.set({tags: userTags});
+
+// ALWAYS do this:
+await storageManager.saveTags(conversationId, userTags);
+```
+
+### CSS Standards (CRITICAL)
+All styles must use mirrored CSS variables:
+
+```css
+/* REQUIRED: Use --ix-* tokens only */
+.ishka-feature {
+  background: var(--ix-color-bg-primary);
+  color: var(--ix-color-text-primary);
+  font-family: var(--ix-font-family);
+}
+
+/* FORBIDDEN: Raw values */
+.bad-example {
+  background: #ffffff;
+  color: #333333;
+}
+```
+
+### Safe Mode Integration (CRITICAL)
+All features must handle Safe Mode activation:
+
+```typescript
+// Required pattern for all UI features
+if (safeModeActive) {
+  showDisabledFeatureWithTooltip('Feature temporarily disabled due to ChatGPT update');
+  return;
+}
+```
+
+---
+
+## 🔒 Out of Scope (DO NOT IMPLEMENT)
+
+These features are **permanently prohibited** due to stability and policy risks:
+
+**Very High Risk (Account Safety)**:
+- Bulk conversation operations (delete, move, archive)
+- Chat renaming, moving, or deletion
+- Folder/project manipulation
+
+**High Risk (API Dependency)**:
+- Full conversation search via API interception
+- Integrated web search
+- Live token management tools
+
+**Medium Risk (DOM Fragility)**:
+- Inline threading or branching
+- Core conversation UI modification
+
+See `docs/OUT_OF_SCOPE.md` for complete rationale and alternatives.
 
 ### Documentation References
 

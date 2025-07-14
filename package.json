@@ -15,28 +15,40 @@
     "test:coverage": "vitest run --coverage",
     "dev:playground": "vite --mode development --config vite.playground.config.js",
     "test:visual": "playwright test tests/e2e/visual/",
-    "automation:complete": "tsx scripts/complete-automation.ts"
+    "automation:complete": "tsx scripts/complete-automation.ts",
+    "ui:start": "./scripts/launch-claude-ui.sh start",
+    "ui:stop": "./scripts/launch-claude-ui.sh stop",
+    "ui:restart": "./scripts/launch-claude-ui.sh restart",
+    "ui:status": "./scripts/launch-claude-ui.sh status",
+    "claude:ui": "./scripts/launch-claude-ui.sh start",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "*.{js,ts,svelte}": ["eslint --fix"],
+    "*.svelte": ["stylelint 'src/**/*.svelte' --fix"]
   },
   "dependencies": {
     "svelte": "^5.28.1"
   },
   "devDependencies": {
     "@crxjs/vite-plugin": "^2.0.0",
+    "@playwright/test": "^1.40.0",
     "@sveltejs/vite-plugin-svelte": "^5.0.3",
     "@types/chrome": "^0.0.313",
-    "vite": "^6.2.0",
-    "vite-plugin-zip-pack": "^1.2.4",
-    "@playwright/test": "^1.40.0",
-    "vitest": "^1.0.0",
-    "jsdom": "^23.0.0",
-    "@vitest/coverage-v8": "^1.0.0",
-    "webextension-polyfill": "^0.10.0",
     "@types/webextension-polyfill": "^0.10.0",
-    "wait-on": "^7.0.0",
+    "@types/ws": "^8.5.10",
+    "@vitest/coverage-v8": "^1.0.0",
+    "chokidar": "^3.5.3",
+    "husky": "^9.1.7",
+    "jsdom": "^23.0.0",
+    "lint-staged": "^16.1.2",
     "tsx": "^4.0.0",
     "typescript": "^5.0.0",
-    "chokidar": "^3.5.3",
-    "ws": "^8.14.2",
-    "@types/ws": "^8.5.10"
+    "vite": "^6.2.0",
+    "vite-plugin-zip-pack": "^1.2.4",
+    "vitest": "^1.0.0",
+    "wait-on": "^7.0.0",
+    "webextension-polyfill": "^0.10.0",
+    "ws": "^8.14.2"
   }
 }

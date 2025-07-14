@@ -32,7 +32,12 @@ if ((window as any).ishkaContentScriptInitialized) {
   // 1. Setup global error handling immediately
   setupGlobalErrorHandling(errorReporter);
 
-  // 2. Check if we're on ChatGPT page and conditionally load logic
+  // 2. Initialize everything in async context
+  (async () => {
+    // Initialize infrastructure systems
+    await initializeInfrastructure(logger);
+
+    // 3. Check if we're on ChatGPT page and conditionally load logic
   const isChatGPTPage = window.location.hostname === 'chat.openai.com' || 
                         window.location.hostname === 'chatgpt.com';
   
@@ -54,7 +59,7 @@ if ((window as any).ishkaContentScriptInitialized) {
     logger.info('Not on ChatGPT page. No page-specific modules loaded.');
   }
 
-  // 3. Always add the diagnostic element for E2E tests (idempotent)
+    // 4. Always add the diagnostic element for E2E tests (idempotent)
   if (!document.getElementById('ishka-diagnostic-element-present')) {
     const result = withSyncErrorHandling(
       () => {
@@ -69,8 +74,11 @@ if ((window as any).ishkaContentScriptInitialized) {
       'create diagnostic element'
     );
   }
+  })().catch(error => {
+    logger.error('Failed to initialize content script', error);
+  });
 
-  // 4. Setup global cleanup
+  // 5. Setup global cleanup
   window.addEventListener('beforeunload', () => {
     logger.debug('Unloading content script...');
     if (pageSpecificCleanup) {
@@ -85,6 +93,21 @@ if ((window as any).ishkaContentScriptInitialized) {
   });
 
   // --- Helper Functions ---
+
+  /**
+   * Initialize core infrastructure systems
+   */
+  async function initializeInfrastructure(logger: any): Promise<void> {
+    try {
+      // Import and initialize Safe Mode
+      const { initializeSafeMode } = await import('./dom/safe-mode.js');
+      await initializeSafeMode();
+      
+      logger.info('✅ Infrastructure initialized successfully');
+    } catch (error) {
+      logger.error('❌ Infrastructure initialization failed', error);
+    }
+  }
 
   /**
    * Set up global error handling for unhandled errors and rejections.

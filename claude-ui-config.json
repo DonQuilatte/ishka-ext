@@ -1,0 +1,35 @@
+{
+  "name": "Claude Code UI Integration",
+  "description": "Automatic launch configuration for Claude Code UI",
+  "version": "1.0.0",
+  "config": {
+    "ui": {
+      "enabled": true,
+      "autoLaunch": true,
+      "port": 3001,
+      "directory": "./claudecodeui",
+      "browser": true
+    },
+    "launch": {
+      "script": "./scripts/launch-claude-ui.sh",
+      "timeout": 10000,
+      "retries": 3
+    },
+    "hooks": {
+      "preStart": [
+        "echo 'Preparing Claude Code UI...'"
+      ],
+      "postStart": [
+        "./scripts/launch-claude-ui.sh start"
+      ],
+      "preStop": [
+        "./scripts/launch-claude-ui.sh stop"
+      ]
+    }
+  },
+  "environment": {
+    "CLAUDE_UI_AUTO_LAUNCH": "true",
+    "CLAUDE_UI_PORT": "3001",
+    "CLAUDE_UI_BROWSER": "true"
+  }
+}
