@@ -103,6 +103,13 @@ if ((window as any).ishkaContentScriptInitialized) {
       const { initializeSafeMode } = await import('./dom/safe-mode.js');
       await initializeSafeMode();
       
+      // Initialize tag injection system on ChatGPT pages
+      if (window.location.hostname === 'chat.openai.com' || window.location.hostname === 'chatgpt.com') {
+        const { initializeTagInjection } = await import('./features/tag-injector.js');
+        await initializeTagInjection();
+        logger.info('✅ Tag injection system initialized');
+      }
+      
       logger.info('✅ Infrastructure initialized successfully');
     } catch (error) {
       logger.error('❌ Infrastructure initialization failed', error);
