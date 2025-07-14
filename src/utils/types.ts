@@ -131,3 +131,85 @@ export interface TestResult {
   status: 'passed' | 'failed' | 'skipped';
   duration: number;
 }
+
+// ==================== USER-CENTERED TYPES ====================
+
+/**
+ * Tag interface for conversation organization
+ */
+export interface Tag {
+  id: string;
+  name: string;
+  color?: string;
+  createdAt: Date;
+  conversationId?: string;
+}
+
+/**
+ * Note interface for message annotations
+ */
+export interface Note {
+  id: string;
+  messageId: string;
+  conversationId: string;
+  content: string;
+  createdAt: Date;
+  updatedAt?: Date;
+}
+
+/**
+ * Template interface for reusable prompts
+ */
+export interface Template {
+  id: string;
+  name: string;
+  content: string;
+  variables: TemplateVariable[];
+  category?: string;
+  createdAt: Date;
+  updatedAt?: Date;
+  usageCount?: number;
+}
+
+/**
+ * Template variable for dynamic content
+ */
+export interface TemplateVariable {
+  name: string;
+  description: string;
+  defaultValue?: string;
+  required: boolean;
+}
+
+/**
+ * Conversation metadata for organization
+ */
+export interface ConversationMetadata {
+  id: string;
+  title: string;
+  tags: Tag[];
+  notes: Note[];
+  createdAt: Date;
+  lastModified: Date;
+  messageCount?: number;
+  isBookmarked?: boolean;
+}
+
+/**
+ * Extension settings for user preferences
+ */
+export interface ExtensionSettings {
+  theme: 'auto' | 'light' | 'dark';
+  enableVoiceInput: boolean;
+  enableTokenCounter: boolean;
+  privacySettings: PrivacySettings;
+}
+
+/**
+ * Privacy settings for user control
+ */
+export interface PrivacySettings {
+  enableClipboardHistory: boolean;
+  enableUsageStats: boolean;
+  dataRetentionDays: number;
+}
