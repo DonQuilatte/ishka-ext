@@ -8,6 +8,7 @@ This template helps you quickly start developing Chrome extensions with Svelte a
 - Vite build tool
 - CRXJS Vite plugin integration
 - Chrome extension manifest configuration
+- Security-focused development with vulnerability scanning
 
 ## Quick Start
 
